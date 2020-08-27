@@ -1,0 +1,20 @@
+<?php
+$iban = $this->getCollectorIbanParameter();
+$bic = $this->getCollectorBicParameter();
+$payReference = $this->getPaymentReferenceParameter();
+?>
+<?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?>{{pdf_row_separator}}
+<?php if (isset($iban)) : ?>
+    <?php echo  Mage::helper('payment')->__('Payment Reference: %s', $this->htmlEscape($iban)) ?>
+    {{pdf_row_separator}}
+<?php endif; ?>
+<?php if (isset($bic)) : ?>
+    <?php echo  Mage::helper('payment')->__('Payment Reference: %s', $this->htmlEscape($bic)) ?>
+    {{pdf_row_separator}}
+<?php endif; ?>
+<?php if (isset($payReference)) : ?>
+    <?php echo  Mage::helper('payment')->__('Payment Reference: %s', $this->htmlEscape($payReference)) ?>
+    {{pdf_row_separator}}
+<?php endif; ?>
+
+<?php echo implode($this->getChildPdfAsArray(), '{{pdf_row_separator}}') ?>

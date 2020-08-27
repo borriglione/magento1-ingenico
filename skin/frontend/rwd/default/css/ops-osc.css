@@ -1,0 +1,14 @@
+.payment-methods .label img {
+    width: 6rem;
+    height: auto;
+}
+
+.payment-methods .payment-method fieldset {
+    position: relative;
+}
+
+.payment-methods .payment-method fieldset input[type=radio] {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}

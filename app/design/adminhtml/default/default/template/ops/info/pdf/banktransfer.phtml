@@ -1,0 +1,10 @@
+<?php
+$payReference = $this->getPaymentReferenceParameter();
+?>
+<?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?>{{pdf_row_separator}}
+<?php if (isset($payReference)) : ?>
+<?php echo  Mage::helper('payment')->__('Payment Reference: %s', $this->htmlEscape($payReference)) ?>
+    {{pdf_row_separator}}
+<?php endif; ?>
+
+<?php echo implode($this->getChildPdfAsArray(), '{{pdf_row_separator}}') ?>

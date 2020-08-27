@@ -1,0 +1,104 @@
+<?php
+/**
+ * Netresearch_OPS
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to
+ * newer versions in the future.
+ *
+ * @copyright Copyright (c) 2016 Netresearch GmbH & Co. KG (http://www.netresearch.de/)
+ * @license   Open Software License (OSL 3.0)
+ * @link      http://opensource.org/licenses/osl-3.0.php
+ */
+
+/**
+ * openInvoice.phtml
+ *
+ * @category payment
+ * @package  Netresearch_OPS
+ * @author   Paul Siedler <paul.siedler@netresearch.de>
+ */
+
+/** @var $this Netresearch_OPS_Block_Form_OpenInvoice */
+?>
+<ul class="form-list ops-form-list" id="payment_form_<?php echo $this->getMethodCode(); ?>" style="display:none;">
+    <?php
+    $code = $this->getMethodCode();
+    $customerData = $this->getCustomerData();
+    $genderOptions = $this->getGenderOptions();
+
+    if ($this->showInvoiceTermsLink()):
+        ?>
+        <a href="<?php echo $this->escapeUrl($this->getInvoiceTermsUrl()); ?>"
+           title="<?php echo $this->escapeHtml($this->getInvoiceTermsTitle()); ?>"
+           target="_blank"><?php echo $this->escapeHtml($this->getInvoiceTermsTitle()); ?></a>
+    <?php endif; ?>
+
+    <div class="input-group ops-input-group">
+        <?php if (empty($customerData['gender']) || empty($customerData['birthdate'])): ?>
+            <p><?php echo $this->escapeHtml(__('Please insert the additional data:')) ?></p>
+        <?php endif; ?>
+
+        <?php if (empty($customerData['gender'])): ?>
+            <div class="field">
+                <label for="gender" class="required"><?php echo $this->escapeHtml(__('Gender')) ?></label>
+                <div class="input-box">
+                    <select id="gender"
+                            name="payment[<?php echo $this->escapeHtml($code) ?>_data][gender]"
+                            class="validate-select required-entry">
+                        <?php foreach ($genderOptions as $option): ?>
+                            <option value="<?php echo $option['value'] ?>">
+                                <?php echo $this->escapeHtml(__($option['label'])) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+        <?php else: ?>
+            <input type="hidden"
+                   name="payment[<?php echo $this->escapeHtml($code) ?>_data][gender]"
+                   value="<?php echo $customerData['gender'] ?>">
+        <?php endif; ?>
+        <?php if (empty($customerData['birthdate'])): ?>
+            <div class="field">
+                <label for="ops_birthdate" class="required"><?php echo $this->escapeHtml(__('Date of Birth')) ?></label>
+                <div class="input-box dob-box">
+
+                    <img style="display: inline"
+                         title="Select Date"
+                         id="date_select_trig"
+                         alt=""
+                         src="<?php echo $this->getSkinUrl("images/calendar.gif"); ?> "/>
+                    <input type="text" id="ops_birthdate"
+                           name="payment[<?php echo $code ?>_data][birthdate]"
+                           class="required-entry" required="required">
+                </div>
+            </div>
+        <?php else: ?>
+            <input type="hidden"
+                   name="payment[<?php echo $code ?>_data][birthdate]"
+                   value="<?php echo $customerData['birthdate'] ?>">
+        <?php endif; ?>
+    </div>
+
+    <p><?php echo $this->getRedirectMessage(); ?></p>
+</ul>
+<?php if (empty($customerData['birthdate'])): ?>
+    <script type="text/javascript">
+      Calendar.setup({
+        inputField: 'ops_birthdate',
+        ifFormat: '%Y-%m-%d',
+        showsTime: false,
+        button: 'date_select_trig',
+        singleClick: true
+      });
+    </script>
+<?php endif; ?>

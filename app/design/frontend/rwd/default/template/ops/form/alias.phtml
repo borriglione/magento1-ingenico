@@ -1,0 +1,107 @@
+<?php
+/**
+ * @category   OPS
+ * @package    Netresearch_OPS
+ * @author     Thomas Birke <thomas.birke@netresearch.de>
+ * @author     Michael Lühr <michael.luehr@netresearch.de>
+ * @copyright  Copyright (c) 2012 Netresearch GmbH & Co. KG
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * Netresearch_OPS_Model_Payment_Alias
+ *
+ * @author     Thomas Birke <thomas.birke@netresearch.de>
+ * @author     Michael Lühr <michael.luehr@netresearch.de>
+ * @copyright  Copyright (c) 2012 Netresearch GmbH & Co. KG
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/** @var Netresearch_OPS_Block_Form_Alias $this */
+?>
+<?php $code = $this->getMethodCode() ?>
+<?php
+    $helper = Mage::helper('ops');
+    $storedAliases = $this->getStoredAliasForCustomer();
+?>
+
+<ul class="form-list ops-form-list ops_alias" id="payment_form_<?php echo $code ?>" style="display:none;">
+    <fieldset>
+    <input type="hidden" name="payment[additional_data][three_ds]" id="threeds_params_alias"/>
+    <?php $setClass = true; ?>
+    <?php foreach ($storedAliases as $key => $alias): ?>
+        <?php
+            $brandName = $this->getStoredAliasBrand($alias->getId());
+            $aliasMethod = $this->getAliasMethod($alias);
+            $isCreditCard = $this->isAliasCc($aliasMethod);
+            $typeLabel = $isCreditCard ? 'Credit Card Number' : 'IBAN';
+        ?>
+            <input type="radio" id="<?php echo $alias->getId() ?>" name="payment[additional_data][alias]"
+                   value="<?php echo $alias->getAlias() ?>"
+                   <?php if($isCreditCard ) :?>
+                        data-brand="<?php echo $brandName ?>"
+                   <?php else: ?>
+                         data-countryid="<?php echo str_replace('Direct Debits ', '', $brandName) ?>"
+                   <?php endif; ?>
+                   data-cn="<?php echo $this->getCardHolderName($alias->getId()) ?>"
+                   data-method="<?php echo $aliasMethod ?>"
+                   <?php if ($setClass): ?>
+                   class="validate-one-required-by-name"
+                   <?php endif; ?>
+            />
+            <label for="<?php echo $alias->getId() ?>">
+                <ul>
+                    <li><?php echo $this->__('Name on Card') . ': ' . $this->getCardHolderName($alias->getId()) ?></li>
+                    <li>
+                        <?php echo $this->__($typeLabel) . ': '
+                            . $this->getAliasCardNumber($alias->getId());
+                        ?>
+                    </li>
+                    <li>
+                        <?php echo $this->__('Credit Card Type:') ?>
+                        <img src="<?php echo $this->getImageForBrand($brandName) ?>" alt="<?php echo $brandName ?>"
+                             class="ops-brandlogo">
+                    </li>
+                    <?php if($isCreditCard): ?>
+                    <li><?php echo $this->__('Expiration Date') . ': '
+                            . $this->getExpirationDatePart($alias->getId(), 'complete');
+                        ?>
+                    </li>
+                        <?php if($this->isInlineCc($aliasMethod)): ?>
+                            <li class="cvc" style="display: none;">
+                                <label class="required"
+                                       for="<?php echo strtoupper($code) ?>_CVC_<?php echo $alias->getId() ?>"><?php echo $this->__('Card Verification Number'); ?>
+                                    <em>*</em></label>
+                                <input title="<?php echo $this->__('Card Verification Number'); ?>"
+                                       class="input-text required-entry"
+                                       type="text" name="payment[additional_data][cvc]"
+                                       id="<?php echo strtoupper($code) ?>_CVC_<?php echo $alias->getId() ?>" length="6"/>
+                            </li>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </ul>
+            </label>
+    <?php $setClass = false; ?>
+    <?php endforeach; ?>
+
+        <input type="select" id="<?php echo $code ?>_stored_alias_brand"
+               name="payment[additional_data][CC_BRAND]" class="hidden" disabled="disabled">
+        <?php foreach ($this->getAliasBrands() as $brand) : ?>
+            <option value="<?php echo $brand; ?>" class="hidden">
+                <?php echo $this->__($brand); ?>
+            </option>
+        <?php endforeach; ?>
+
+        <input type="select" id="<?php echo $code ?>_stored_country_id"
+               name="payment[additional_data][country_id]" class="hidden" disabled="disabled">
+        <?php foreach ($this->getDirectDebitCountryIds() as $countryId) : ?>
+            <option value="<?php echo $countryId; ?>" class="hidden">
+                <?php echo $this->__($countryId); ?>
+            </option>
+        <?php endforeach; ?>
+    </fieldset>
+</ul>
+<script type="text/javascript">
+    var threeDsParams = JSON.stringify(new MpiParameter().get('<?php echo $this->escapeHtml($this->getAcceptHeader()); ?>'));
+    $('threeds_params_alias').value = threeDsParams;
+</script>

@@ -1,0 +1,28 @@
+.payment-methods .label img {
+    width: 6rem;
+    height: auto;
+}
+
+.payment-methods .payment-method .ops_card fieldset,
+.payment-methods .payment-method .ops_card fieldset > div{
+    position: relative;
+}
+
+.payment-methods .payment-method .ops_card fieldset input[type=radio] {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+}
+
+.payment-methods .label {
+    margin: 0 0 0 1.5rem;
+}
+
+
+#onestepcheckout-form ul.ops-form-list.ops_alias input[type=radio]:checked + label {
+    background-color: #dedede;
+}
+button.onestepcheckout-place-order {
+    width:auto;
+}

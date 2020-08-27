@@ -1,0 +1,51 @@
+<?php
+/**
+ * Netresearch_OPS
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to
+ * newer versions in the future.
+ *
+ * @copyright Copyright (c) 2016 Netresearch GmbH & Co. KG (http://www.netresearch.de/)
+ * @license   Open Software License (OSL 3.0)
+ * @link      http://opensource.org/licenses/osl-3.0.php
+ */
+
+/**
+ * @var Netresearch_OPS_Block_Form_Cc $this
+ */
+$code = $this->getMethodCode();
+?>
+<ul class="form-list ops-form-list ops_card" id="payment_form_<?php echo $code ?>" style="display:none;">
+    <li>
+        <fieldset>
+            <?php $count = count($this->getCcBrands());?>
+            <?php foreach ($this->getCCBrands() as $index => $brand) : ?>
+                <div class="cc_redirect_brands">
+                    <input type="radio"
+                           id="<?php echo strtoupper($code) ?>_BRAND_<?php echo $brand; ?>"
+                           name="payment[<?php echo $code; ?>_data][BRAND]"
+                           value="<?php echo $brand;?>"
+                           <?php if ($index === $count - 1): ?>
+                           class="validate-one-required-by-name"
+                           <?php endif; ?>
+                    >
+                    <label for="<?php echo strtoupper($code) ?>_BRAND_<?php echo $brand; ?>" class="label">
+                        <img src="<?php echo $this->getImageForBrand($brand) ?>" alt="<?php echo $brand ?>" class="">
+                    </label>
+                </div>
+            <?php endforeach; ?>
+            <p id="<?php echo $code ?>_redirect_note" class="ops_htp_redirect">
+                <?php echo $this->getRedirectMessage(); ?>
+            </p>
+        </fieldset>
+    </li>
+</ul>
